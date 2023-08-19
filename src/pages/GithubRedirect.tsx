@@ -1,13 +1,10 @@
-import React from 'react'
-import {
-    useQuery,
-} from '@tanstack/react-query'
+import React, {useEffect, useState} from 'react'
 import githubAuth from "../apis/githubAuth.ts"
-import Profile from '../services/Profile.tsx'
+import Profile from '../services/Profile'
 import {Spinner} from '@chakra-ui/react'
-import { useDispatch } from 'react-redux'
-import { setAccessToken } from '../store/user'
-import {useSearchParams, useNavigate, Navigate} from 'react-router-dom'
+import {useDispatch} from 'react-redux'
+import { setAccessToken} from '../store/user'
+import {useSearchParams, Navigate} from 'react-router-dom'
 
 function GithubRedirect () {
     const [params] = useSearchParams()
@@ -32,22 +29,36 @@ function GithubRedirect () {
 const Redirect: React.FC<{code: string}> = ({ code }) => {
 
     const dispatch = useDispatch()
-    const navigate = useNavigate()
 
-    const { isLoading, error, data } = useQuery({
-        queryKey: ['repoData'],
-        queryFn: () => githubAuth(code)
-    })
+    const [isLoading_, setIsLoading_] = useState(true)
+    const [isError_, setIsError_] = useState(false)
 
-    dispatch(setAccessToken(data))
 
-    if (error) {
-        console.log(error)
-        navigate('/login')
+    useEffect( () => {
+
+        const loadData = async () => {
+            try {
+                const res = await githubAuth(code)
+                dispatch(setAccessToken(res))
+                setIsLoading_(false)
+            } catch (e) {
+                setIsError_(true)
+                setIsLoading_(false)
+            }
+        }
+
+        loadData()
+
+    }, [code, dispatch])
+
+
+
+    if (isError_) {
+        return <Navigate to="/login" />
     }
 
-    if (!isLoading && !error) {
-        return <Profile/>
+    if (!isLoading_) {
+        return <Profile />
     }
 }
 

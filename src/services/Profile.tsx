@@ -1,30 +1,46 @@
-import { useDispatch } from 'react-redux'
-import Navigator from './Navigator'
+import {useDispatch} from 'react-redux'
 
-import {useNavigate} from 'react-router-dom'
-import {useQuery} from "@tanstack/react-query";
+import {Navigate} from 'react-router-dom'
 import getProfile from "../apis/profile.ts";
-import {setUser} from "../store/user.ts";
-import React from "react";
+import {checkFirst, setUser} from "../store/user.ts";
+import React, { useEffect, useState} from "react"
 
 const Profile: React.FC = () => {
-    const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    const [isLoading, setIsLoading] = useState(true)
+    const [isError, setIsError] = useState(false)
+    const [data, setData] = useState({})
 
-    const { isLoading, isError, data } = useQuery({
-        queryFn: () => getProfile()
-    })
+
+    useEffect( () => {
+
+        const loadData = async () => {
+            try {
+                const res = await getProfile()
+                setData(res)
+                dispatch(setUser(data))
+                setIsLoading(false)
+            } catch (e) {
+                setIsError(true)
+                setIsLoading(false)
+            }
+        }
+
+        loadData()
+
+    }, [data, dispatch])
+
+
 
     if (isError) {
-        navigate('/login')
+        return <Navigate to="/login" />
     }
 
-    dispatch(setUser(data))
-
-
     if (!isLoading && !isError) {
-        return <Navigator/>
+        dispatch(checkFirst())
+
+        return <Navigate to="/" />
     }
 }
 

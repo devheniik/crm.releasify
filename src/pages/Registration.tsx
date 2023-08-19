@@ -1,70 +1,86 @@
 import React, {useState} from 'react'
 import {Input, useToast} from '@chakra-ui/react'
 import GitHubAuth from '../components/GitHubAuth'
-import {useDispatch, useSelector} from "react-redux"
-import login from "../apis/login.ts"
+import {useDispatch} from "react-redux"
+import register from "../apis/registration.ts"
+import handleChangeObject from "../hooks/handleChangeObject.ts"
 import {setAccessToken} from "../store/user.ts"
-import {Link, useNavigate} from "react-router-dom"
-import {UserStore} from "../types/User.ts";
+import Profile from "../services/Profile.tsx"
+import handleValidationErrors from "../hooks/handleValidationErrors.ts"
+import {Navigate} from "react-router-dom";
 
 const Login: React.FC = () => {
 
     interface Form {
         username: string
+        email: string
         password: string
+        repeatPassword: string
     }
 
     const toast = useToast()
     const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const { initialRoute } = useSelector((state: { user: UserStore }) => state.user)
 
     const [values, setValues] = useState<Form>({
         username: '',
-        password: ''
+        email: '',
+        password: '',
+        repeatPassword: ''
     })
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValues({
-            ...values,
-            [event.target.name]: event.target.value
-        })
+        handleChangeObject<Form>(values, setValues, event)
     }
 
 
 
 
     const handleSubmit = async () => {
-        if (values.username && values.password) {
 
-            login(values.username, values.password).then(
-                token => {
-                    dispatch(setAccessToken(token))
-
-                    if (initialRoute && initialRoute !== '/' && initialRoute !== '/login') {
-                        return navigate(initialRoute)
-                    }
-
-                    return navigate('/')
-                }
-            ).catch(() => {
-                toast({
-                    title: 'Login failed',
-                    description: "Please check your credentials",
-                    status: 'error',
-                    duration: 9000,
-                    isClosable: true,
-                })
-            })
-
-        } else {
+        if (values.password !== values.repeatPassword) {
             toast({
                 title: 'Validation failed',
-                description: "Please enter a username and password",
+                description: "Passwords don't match",
                 status: 'warning',
                 duration: 9000,
                 isClosable: true,
             })
+            return
+        }
+
+        if (values.username && values.email && values.password) {
+
+            try {
+                const response = await register(values.username, values.email, values.password)
+                dispatch(setAccessToken(response.data))
+                return <Navigate to="/"/>
+
+            } catch (error: any) {
+
+
+                if (error.response.status === 422) {
+                    handleValidationErrors(error, toast)
+                    return
+                }
+
+                toast({
+                    title: 'Registration failed',
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                })
+            }
+
+        } else {
+
+            toast({
+                title: 'Validation failed',
+                description: "Please enter a username, email and password",
+                status: 'warning',
+                duration: 9000,
+                isClosable: true,
+            })
+
         }
     }
 
@@ -104,6 +120,23 @@ const Login: React.FC = () => {
                             </div>
 
                             <div>
+                                <label htmlFor="email"
+                                       className="block text-sm font-medium leading-6 text-gray-900">
+                                    Username
+                                </label>
+                                <div className="mt-2">
+                                    <Input
+                                        type="email"
+                                        name="email"
+                                        value={values.email}
+                                        placeholder='example@test.com'
+                                        autoComplete="current-email"
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
                                 <label htmlFor="password"
                                        className="block text-sm font-medium leading-6 text-gray-900">
                                     Password
@@ -113,6 +146,22 @@ const Login: React.FC = () => {
                                         type="password"
                                         name="password"
                                         value={values.password}
+                                        autoComplete="current-password"
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label htmlFor="repeat-password"
+                                       className="block text-sm font-medium leading-6 text-gray-900">
+                                    Repeat password
+                                </label>
+                                <div className="mt-2">
+                                    <Input
+                                        type="password"
+                                        name="repeatPassword"
+                                        value={values.repeatPassword}
                                         autoComplete="current-password"
                                         onChange={handleChange}
                                     />
@@ -132,7 +181,7 @@ const Login: React.FC = () => {
                                     onClick={handleSubmit}
                                     className="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                                 >
-                                    Sign in
+                                    Sign up
                                 </a>
                             </div>
                         </form>
@@ -155,9 +204,9 @@ const Login: React.FC = () => {
 
                     <p className="mt-10 text-center text-sm text-gray-500">
                         Not a member?{' '}
-                        <Link className="font-semibold leading-6 text-blue-600 hover:text-blue-500" to="/registration">
+                        <a href="#" className="font-semibold leading-6 text-blue-600 hover:text-blue-500">
                             Create an account
-                        </Link>
+                        </a>
                     </p>
                 </div>
             </div>

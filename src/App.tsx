@@ -15,6 +15,9 @@ import {
     QueryClient,
     QueryClientProvider,
 } from '@tanstack/react-query'
+import Registration from "./pages/Registration.tsx";
+import Guard from "./services/Guard.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
 
 function App() {
     return (
@@ -24,8 +27,18 @@ function App() {
                     <ChakraProvider>
                         <Router>
                             <Routes>
-                                <Route path="/" element={<Dashboard/>}/>
+                                <Route path="/" element={
+                                    <Guard route={'/'}>
+                                        <Dashboard/>
+                                    </Guard>
+                                }/>
+                                <Route path="/profile" element={
+                                    <Guard route={'/profile'}>
+                                        <ProfilePage/>
+                                    </Guard>
+                                }/>
                                 <Route path="/login" element={<Login/>}/>
+                                <Route path="/registration" element={<Registration/>}/>
                                 <Route path="/github/auth" element={<GithubRedirect/>}/>
                             </Routes>
                         </Router>

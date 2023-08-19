@@ -8,12 +8,11 @@ const Navigator: React.FC = () => {
     const dispatch = useDispatch()
     const { initialRoute } = useSelector((state: { user: UserStore }) => state.user)
 
-    if (initialRoute) {
-        dispatch(checkFirst())
+    dispatch(checkFirst())
+    if (initialRoute && initialRoute !== '/' && initialRoute !== '/login') {
         return <Navigate to={initialRoute} />
     }
 
-    dispatch(checkFirst())
     return <Navigate to="/" />
 
 }

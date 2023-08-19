@@ -13,7 +13,7 @@ const user = createSlice({
         checkFirst: (state) => {
             state.isFirstRoute = true
         },
-        setInitialRoute: (state, action) => {
+        setInitialRoute: (state, action: { payload: string }) => {
             state.initialRoute = action.payload
         },
         setUser: (state, action) => {
