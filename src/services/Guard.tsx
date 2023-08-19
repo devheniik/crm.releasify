@@ -6,7 +6,7 @@ import {Navigate} from "react-router-dom"
 import {Fragment, useEffect} from "react";
 import {useState} from "react";
 
-const Guard = (props: { route: string, children }) => {
+const Guard = (props: { route: string, children: any }) => {
     const dispatch = useDispatch()
     const isAuth = useSelector((state: { user: UserStore }) => state.user.isAuth)
     const [auth, setAuth] = useState(false)

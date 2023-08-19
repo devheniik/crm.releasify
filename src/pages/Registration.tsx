@@ -5,7 +5,6 @@ import {useDispatch} from "react-redux"
 import register from "../apis/registration.ts"
 import handleChangeObject from "../hooks/handleChangeObject.ts"
 import {setAccessToken} from "../store/user.ts"
-import Profile from "../services/Profile.tsx"
 import handleValidationErrors from "../hooks/handleValidationErrors.ts"
 import {Navigate} from "react-router-dom";
 
