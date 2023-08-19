@@ -6,7 +6,7 @@ import register from "../apis/registration.ts"
 import handleChangeObject from "../hooks/handleChangeObject.ts"
 import {setAccessToken} from "../store/user.ts"
 import handleValidationErrors from "../hooks/handleValidationErrors.ts"
-import {Navigate} from "react-router-dom";
+import {Navigate} from "react-router-dom"
 
 const Login: React.FC = () => {
 

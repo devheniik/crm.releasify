@@ -18,6 +18,7 @@ import {
 import Registration from "./pages/Registration.tsx";
 import Guard from "./services/Guard.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
+import Sidebar from "./layouts/Sidebar.tsx";
 
 function App() {
     return (
@@ -29,12 +30,16 @@ function App() {
                             <Routes>
                                 <Route path="/" element={
                                     <Guard route={'/'}>
-                                        <Dashboard/>
+                                        <Sidebar>
+                                            <Dashboard/>
+                                        </Sidebar>
                                     </Guard>
                                 }/>
                                 <Route path="/profile" element={
                                     <Guard route={'/profile'}>
-                                        <ProfilePage/>
+                                        <Sidebar>
+                                            <ProfilePage/>
+                                        </Sidebar>
                                     </Guard>
                                 }/>
                                 <Route path="/login" element={<Login/>}/>

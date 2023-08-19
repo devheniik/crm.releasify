@@ -10,6 +10,15 @@ export interface User {
     updated_at: string
 }
 
+export interface UpdateUser {
+    name: string
+    username: string
+    avatar_url: string
+    email: string
+    password: string
+    repeat_password: string
+}
+
 export interface UserStore {
     isFirstRoute: boolean
     isAuth: false
