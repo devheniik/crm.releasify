@@ -1,7 +1,6 @@
 import React from 'react'
 
 const GitHubAuth: React.FC = () => {
-
     // eslint-disable-next-line no-undef
     const client_id = import.meta.env.VITE_GITHUB_CLIENT_ID
 
