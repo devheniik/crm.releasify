@@ -6,7 +6,7 @@ import {Navigate} from "react-router-dom"
 import {Fragment, useEffect} from "react";
 import {useState} from "react";
 
-const Guard = (props: { route: string, children: any }) => {
+const Guard = (props: { route: string | null, children: any }) => {
     const dispatch = useDispatch()
     const isAuth = useSelector((state: { user: UserStore }) => state.user.isAuth)
     const [auth, setAuth] = useState(false)
@@ -16,6 +16,8 @@ const Guard = (props: { route: string, children: any }) => {
     useEffect(() => {
 
         setAuth(isAuth)
+
+        console.log(auth, "auth")
 
         if (auth) {
             setAuth(true)
@@ -33,18 +35,23 @@ const Guard = (props: { route: string, children: any }) => {
             }
         }
 
-        if (!auth&& localStorage.getItem("access_token")) {
+        if (!auth && localStorage.getItem("access_token")) {
             checkAuth()
+        } else {
+            setIsLoading(false)
         }
+
 
     }, [props.children])
 
 
     if (auth) {
+        console.log(auth && !isLoading, auth, isLoading, "well")
         return <Fragment>{props.children}</Fragment>
     }
 
-    if (!isLoading) {
+    if (!isLoading && !auth) {
+        console.log(!isLoading && !auth, isLoading, auth, "login")
         if (props.route) {
             dispatch(setInitialRoute(props.route))
         }
