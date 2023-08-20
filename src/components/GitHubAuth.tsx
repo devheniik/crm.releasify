@@ -5,7 +5,7 @@ const GitHubAuth: React.FC = () => {
     const client_id = import.meta.env.VITE_GITHUB_CLIENT_ID
 
     const handleClick = () => {
-        window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}`
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}&scope=read:user user:email repo`
     }
 
 
